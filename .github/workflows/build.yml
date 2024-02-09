@@ -1,0 +1,144 @@
+name: Build and Extract Files from Docker Container
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-files-linux-x64:
+    runs-on: ubuntu-22.04
+    if: ${{ false }}  # Set condition to false to make the workflow inactive
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build and Extract Files from Docker Container
+        run: |
+          # Build the Docker image from the Dockerfile in the repository
+          docker build \
+            --build-arg CPU_CORES=$(nproc) \
+            --build-arg TICKER=ESK \
+            --build-arg NAME=Eskacoin \
+            --build-arg BASE_NAME=eskacoin \
+            --build-arg TARGET=master \
+            -t eskacoin-linux-x64-build \
+            -f contrib/docker/Dockerfile.dsw-linux-x64-wallet .
+
+          # Start the container (if it's not already running)
+          docker run -d --name eskacoin-linux-x64-build-container eskacoin-linux-x64-build
+
+          # Create a temporary directory to hold the extracted files
+          mkdir release_files
+
+          # Copy files from the Docker container to the local filesystem
+          docker cp eskacoin-linux-x64-build-container:/ESK/deploy/linux-x64 release_files/
+
+      - name: Archive and Upload Extracted Files
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifacts
+          path: release_files
+  build-files-linux-arm64:
+    runs-on: ubuntu-22.04
+    if: ${{ false }}  # Set condition to false to make the workflow inactive
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build and Extract Files from Docker Container
+        run: |
+          # Build the Docker image from the Dockerfile in the repository
+          docker build \
+            --build-arg CPU_CORES=$(nproc) \
+            --build-arg TICKER=ESK \
+            --build-arg NAME=Eskacoin \
+            --build-arg BASE_NAME=eskacoin \
+            --build-arg TARGET=master \
+            -t eskacoin-linux-arm64-build \
+            -f contrib/docker/Dockerfile.dsw-linux-arm64-wallet .
+
+          # Start the container (if it's not already running)
+          docker run -d --name eskacoin-linux-arm64-build-container eskacoin-linux-arm64-build
+
+          # Create a temporary directory to hold the extracted files
+          mkdir release_files
+
+          # Copy files from the Docker container to the local filesystem
+          docker cp eskacoin-linux-arm64-build-container:/ESK/deploy/linux-arm64 release_files/
+
+      - name: Archive and Upload Extracted Files
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifacts
+          path: release_files
+  build-windows-x64:
+    runs-on: ubuntu-22.04
+    if: ${{ false }}  # Set condition to false to make the workflow inactive
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build and Extract Files from Docker Container
+        run: |
+          # Build the Docker image from the Dockerfile in the repository
+          docker build \
+            --build-arg CPU_CORES=$(nproc) \
+            --build-arg TICKER=ESK \
+            --build-arg NAME=Eskacoin \
+            --build-arg BASE_NAME=eskacoin \
+            --build-arg TARGET=master \
+            -t eskacoin-windows-x64-build \
+            -f contrib/docker/Dockerfile.dsw-windows-x64-wallet .
+
+          # Start the container (if it's not already running)
+          docker run -d --name eskacoin-windows-x64-build-container eskacoin-windows-x64-build
+
+          # Create a temporary directory to hold the extracted files
+          mkdir release_files
+
+          # Copy files from the Docker container to the local filesystem
+          docker cp eskacoin-windows-x64-build-container:/ESK/deploy/windows-x64 release_files/
+
+      - name: Archive and Upload Extracted Files
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifacts
+          path: release_files
+  build-macos-x64:
+    runs-on: ubuntu-22.04
+    if: ${{ false }}  # Set condition to false to make the workflow inactive
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build and Extract Files from Docker Container
+        run: |
+          # Build the Docker image from the Dockerfile in the repository
+          docker build \
+            --build-arg CPU_CORES=$(nproc) \
+            --build-arg TICKER=ESK \
+            --build-arg NAME=Eskacoin \
+            --build-arg BASE_NAME=eskacoin \
+            --build-arg TARGET=master \
+            -t eskacoin-macos-x64-build \
+            -f contrib/docker/Dockerfile.dsw-macos-x64-wallet .
+
+          # Start the container (if it's not already running)
+          docker run -d --name eskacoin-macos-x64-build-container eskacoin-macos-x64-build
+
+          # Create a temporary directory to hold the extracted files
+          mkdir release_files
+
+          # Copy files from the Docker container to the local filesystem
+          docker cp eskacoin-macos-x64-build-container:/ESK/deploy/macos-x64 release_files/
+
+      - name: Archive and Upload Extracted Files
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifacts
+          path: release_files
